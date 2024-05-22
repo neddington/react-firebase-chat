@@ -15,7 +15,7 @@ const Login = () => {
     url: "",
   });
 
-
+  const [loading, setLoading] = useState(false);
 
   const handleAvatar = (e) => {
     if (e.target.files[0]) {
@@ -28,6 +28,7 @@ const Login = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData(e.target);
 
     const { username, email, password } = Object.fromEntries(formData);
@@ -53,11 +54,14 @@ const Login = () => {
     } catch (err) {
       console.log(err);
       toast.error(err.message);
-    } 
+    } finally {
+        setLoading(false);
+      }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const formData = new FormData(e.target);
     const { email, password } = Object.fromEntries(formData);
@@ -67,22 +71,25 @@ const Login = () => {
     } catch (err) {
       console.log(err);
       toast.error(err.message);
-    }
+    } finally {
+        setLoading(false);
+      }
   };
 
   return (
     <div className="login">
       <div className="item">
-        <h2>Welcome back,</h2>
+        <h2>Welcome back, Helldivers</h2>
         <form onSubmit={handleLogin}>
           <input type="text" placeholder="Email" name="email" />
           <input type="password" placeholder="Password" name="password" />
-          <button>"Sign In"</button>
+          <button disabled={loading}>{loading ? "Loading" : "Sign In"}</button>
         </form>
       </div>
       <div className="separator"></div>
       <div className="item">
-        <h2>Create an Account</h2>
+        <h1>Are you a coward?</h1>
+        <h2>Create an Account & Fight for Democracy</h2>
         <form onSubmit={handleRegister}>
           <label htmlFor="file">
             <img src={avatar.url || "./avatar.png"} alt="" />
@@ -97,7 +104,7 @@ const Login = () => {
           <input type="text" placeholder="Username" name="username" />
           <input type="text" placeholder="Email" name="email" />
           <input type="password" placeholder="Password" name="password" />
-          <button>"Sign Up</button>
+          <button disabled={loading}>{loading ? "Loading" : "Sign Up"}</button>
         </form>
       </div>
     </div>
