@@ -108,7 +108,7 @@ const Chat = () => {
                 </div>
                 <input 
                     type="text" 
-                    placeholder="Type a thought..." 
+                    placeholder="For Democracy..." 
                     value={text}
                     onChange={e=>setText(e.target.value)}/>
                 <div className="emoji">
