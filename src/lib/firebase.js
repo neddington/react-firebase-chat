@@ -8,7 +8,7 @@ import { getStorage } from "firebase/storage";
 
 
 const firebaseConfig = {
-  apiKey: import.meta.VITE_API_KEY,
+  apiKey: "AIzaSyCJJDSokkGkIyYxwP7uPBj7S0THoFZjH0U",
   authDomain: "helldivers-chat.firebaseapp.com",
   projectId: "helldivers-chat",
   storageBucket: "helldivers-chat.appspot.com",

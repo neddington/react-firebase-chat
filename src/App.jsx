@@ -6,21 +6,21 @@ import Notification from "./components/notification/Notification";
 
 const App = () => {
 
-  const user = true 
+  const user = false
 
   return (
     <div className="container">
       {
-      user ? (
-        <>
-          <List />
-          <Chat />
-          <Detail />
-        </>
-      ) : (
-        <Login />
-      )}
-      <Notification/>
+        user ? (
+          <>
+            <List />
+            <Chat />
+            <Detail />
+          </>
+        ) : (
+          <Login />
+        )}
+      <Notification />
     </div>
   );
 };
