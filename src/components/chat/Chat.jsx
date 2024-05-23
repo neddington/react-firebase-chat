@@ -117,9 +117,9 @@ const Chat = () => {
         <div className='chat'>
             <div className="top">
                 <div className="user">
-                    <img src="./avatar.png" alt="" />
+                    <img src={user?.avatar || "./avatar.png"} alt="" />
                     <div className="texts">
-                        <span>Jane Doe</span>
+                        <span>{user?.username}</span>
                         <p>Lorem ipsum dolor sit amet.</p>
                     </div>
                 </div>
@@ -161,9 +161,12 @@ const Chat = () => {
                 </div>
                 <input 
                     type="text" 
-                    placeholder="For Democracy..." 
+                    placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "Reported for undemocractic behavior" 
+                    : "For Democracy..."} 
                     value={text}
-                    onChange={e=>setText(e.target.value)}/>
+                    onChange={e=>setText(e.target.value)}
+                    disabled={isCurrentUserBlocked || isReceiverBlocked}
+                />
                 <div className="emoji">
                     <img 
                         src="./emoji.png" 
@@ -174,7 +177,7 @@ const Chat = () => {
                     <EmojiPicker open={open} onEmojiClick={handleEmoji}/>
                     </div>
                 </div>
-                <button className="sendButton" onClick={handleSend}>Send</button>
+                <button className="sendButton" onClick={handleSend} disabled={isCurrentUserBlocked || isReceiverBlocked}>Send</button>
             </div>
         </div>
     )
