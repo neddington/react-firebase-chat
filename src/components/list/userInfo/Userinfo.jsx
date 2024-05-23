@@ -27,7 +27,7 @@ const UserInfo = () => {
         fetchTagline();
 
         return () => {
-            // Cleanup function
+            
         };
     }, [currentUser.id]);
 

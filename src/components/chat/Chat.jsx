@@ -17,6 +17,7 @@ import { format } from "timeago.js";
 
 
 const Chat = () => {
+    const [receiverTagline, setReceiverTagline] = useState("");
     const [chat, setChat] = useState(); 
     const [open, setOpen] = useState(false)
     const [text, setText] = useState("")
@@ -40,6 +41,22 @@ const Chat = () => {
           setChat(res.data());
         });
     
+        // Fetch the receiver's tagline
+        const fetchReceiverTagline = async () => {
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.id));
+                const userData = userDoc.data();
+                if (userData && userData.tagline) {
+                    setReceiverTagline(userData.tagline);
+                } else {
+                    setReceiverTagline("");
+                }
+            } catch (error) {
+                console.error("Error fetching receiver's tagline:", error);
+            }
+        };
+        fetchReceiverTagline();
+
         return () => {
           unSub();
         };
@@ -122,7 +139,7 @@ const Chat = () => {
                     <img src={user?.avatar || "./avatar.png"} alt="" />
                     <div className="texts">
                         <span>{user?.username}</span>
-                        <p>Lorem ipsum dolor sit amet.</p>
+                        <p>{receiverTagline}</p>
                     </div>
                 </div>
                 <div className="icons">

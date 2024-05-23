@@ -1,40 +1,61 @@
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
+import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useChatStore } from "../../lib/chatStore";
 import { auth, db } from "../../lib/firebase";
 import { useUserStore } from "../../lib/userStore";
 import "./detail.css";
 
 const Detail = () => {
+    const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, changeBlock, resetChat } = useChatStore();
+    const { currentUser } = useUserStore();
+    const [receiverTagline, setReceiverTagline] = useState(""); // State to store receiver's tagline
 
-  const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, changeBlock, resetChat } =
-  useChatStore();
-const { currentUser } = useUserStore();
+    useEffect(() => {
+        // Fetch the receiver's tagline
+        const fetchReceiverTagline = async () => {
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.id));
+                const userData = userDoc.data();
+                if (userData && userData.tagline) {
+                    setReceiverTagline(userData.tagline);
+                } else {
+                    setReceiverTagline("No tagline");
+                }
+            } catch (error) {
+                console.error("Error fetching receiver's tagline:", error);
+            }
+        };
+        fetchReceiverTagline();
 
-const handleBlock = async () => {
-  if (!user) return;
+        return () => {
+          setReceiverTagline("");
+        };
+    }, [user.id]);
 
-  const userDocRef = doc(db, "users", currentUser.id);
+    const handleBlock = async () => {
+        if (!user) return;
 
-  try {
-    await updateDoc(userDocRef, {
-      blocked: isReceiverBlocked ? arrayRemove(user.id) : arrayUnion(user.id),
-    });
-    changeBlock();
-  } catch (err) {
-    console.log(err);
-  }
-};
+        const userDocRef = doc(db, "users", currentUser.id);
 
+        try {
+            await updateDoc(userDocRef, {
+                blocked: isReceiverBlocked ? arrayRemove(user.id) : arrayUnion(user.id),
+            });
+            changeBlock();
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     return (
         <div className='detail'>
             <div className="user">
-                <img src="./avatar.png" alt="" />
-                <h2>Jane Doe</h2>
-                <p>Lorem ipsum dolor sit.</p>
+                <img src={user?.avatar || "./avatar.png"} alt="" />
+                <h2>{user?.username}</h2>
+                <p>{receiverTagline}</p> {/* Display receiver's tagline */}
             </div>
             <div className="info">
-        <div className="option">
+            <div className="option">
           <div className="title">
             <span>Chat Settings</span>
             <img src="./arrowUp.png" alt="" />
@@ -100,19 +121,17 @@ const handleBlock = async () => {
             <img src="./arrowUp.png" alt="" />
           </div>
         </div>
-        <button onClick={handleBlock}>
-          {isCurrentUserBlocked
-            ? "You're Blocked, Report to Democracy Officer!"
-            : isReceiverBlocked
-            ? "User Blocked & Reported"
-            : "Block & Report to Democracy Officer"}
-        </button>
-                <button className="logout" onClick={()=>auth.signOut()}>Logout</button>
-            </div>        
+                <button onClick={handleBlock}>
+                    {isCurrentUserBlocked
+                        ? "You're Blocked, Report to Democracy Officer!"
+                        : isReceiverBlocked
+                            ? "User Blocked & Reported"
+                            : "Block & Report to Democracy Officer"}
+                </button>
+                <button className="logout" onClick={() => auth.signOut()}>Logout</button>
+            </div>
         </div>
-   
-    
     );
 };
 
-export default Detail
+export default Detail;
