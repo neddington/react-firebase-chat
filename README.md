@@ -1,1 +1,1 @@
-Therapy Thoughts
+Democracy Chat
