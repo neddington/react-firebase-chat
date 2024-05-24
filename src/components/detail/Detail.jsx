@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { arrayRemove, arrayUnion, doc, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import { useChatStore } from "../../lib/chatStore";
 import { auth, db } from "../../lib/firebase";

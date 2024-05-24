@@ -11,6 +11,7 @@ import {
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/userStore";
+import { get } from "firebase/database";
 import upload from "../../lib/upload";
 import { format } from "timeago.js";
 
