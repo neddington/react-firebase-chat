@@ -68,9 +68,9 @@ const UserInfo = () => {
                 </div>
             </div>
             <div className="icons">
+                <img src="./edit.png" alt="" onClick={handleEditToggle} />
                 <img src="./more.png" alt="" />
                 <img src="./video.png" alt="" />
-                <img src="./edit.png" alt="" onClick={handleEditToggle} />
             </div>
             <div></div>
         </div>
