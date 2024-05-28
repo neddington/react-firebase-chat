@@ -40,10 +40,6 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
-        const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
-            setChat(res.data());
-        });
-
         // Fetch the receiver's tagline
         const fetchReceiverTagline = async () => {
             try {
@@ -52,18 +48,35 @@ const Chat = () => {
                 if (userData && userData.tagline) {
                     setReceiverTagline(userData.tagline);
                 } else {
-                    setReceiverTagline("");
+                    setReceiverTagline("No tagline");
                 }
             } catch (error) {
                 console.error("Error fetching receiver's tagline:", error);
             }
         };
-        fetchReceiverTagline();
-
+    
+        // Real-time update of tagline
+        const unsubscribeTagline = onSnapshot(doc(db, "users", user.id), (snapshot) => {
+            const userData = snapshot.data();
+            if (userData && userData.tagline) {
+                setReceiverTagline(userData.tagline);
+            } else {
+                setReceiverTagline("No tagline");
+            }
+        });
+    
+        // Real-time update of chat messages
+        const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
+            setChat(res.data());
+        });
+    
+        // Cleanup
         return () => {
             unSub();
+            unsubscribeTagline();
         };
-    }, [chatId]);
+    }, [user.id, chatId]);
+    
 
     const handleEmoji = (e) => {
         setText((prev) => prev + e.emoji);
