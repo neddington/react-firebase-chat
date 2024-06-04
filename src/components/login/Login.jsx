@@ -14,8 +14,8 @@ const Login = () => {
     file: null,
     url: "",
   });
-
   const [loading, setLoading] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
 
   const handleAvatar = (e) => {
     if (e.target.files[0]) {
@@ -33,16 +33,24 @@ const Login = () => {
 
     const { username, email, password } = Object.fromEntries(formData);
 
-    if (!username || !email || !password)
-        return toast.warn("Please enter inputs!") && setLoading(false);
-      if (!avatar.file) return toast.warn("Please upload an avatar!") && setLoading(false);
-
+    if (!username || !email || !password) {
+      toast.warn("Please enter inputs!");
+      setLoading(false);
+      return;
+    }
+    if (!avatar.file) {
+      toast.warn("Please upload an avatar!");
+      setLoading(false);
+      return;
+    }
 
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("username", "==", username));
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
-      return toast.warn("Select another username");
+      toast.warn("Select another username");
+      setLoading(false);
+      return;
     }
 
     try {
@@ -63,12 +71,15 @@ const Login = () => {
       });
 
       toast.success("Account created! You can login now!");
+      setAccountCreated(true);
+      e.target.reset();  // Reset the form after successful account creation
+      setAvatar({ file: null, url: "" });  // Reset avatar state
     } catch (err) {
       console.log(err);
       toast.error(err.message);
     } finally {
-        setLoading(false);
-      }
+      setLoading(false);
+    }
   };
 
   const handleLogin = async (e) => {
@@ -80,12 +91,14 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      // Redirect to home or dashboard
+      window.location.href = "/dashboard"; // Ensure this path is correct for your app
     } catch (err) {
       console.log(err);
       toast.error(err.message);
     } finally {
-        setLoading(false);
-      }
+      setLoading(false);
+    }
   };
 
   return (
