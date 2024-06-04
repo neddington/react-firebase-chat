@@ -54,7 +54,7 @@ const Chat = () => {
                 console.error("Error fetching receiver's tagline:", error);
             }
         };
-    
+
         // Real-time update of tagline
         const unsubscribeTagline = onSnapshot(doc(db, "users", user.id), (snapshot) => {
             const userData = snapshot.data();
@@ -64,19 +64,18 @@ const Chat = () => {
                 setReceiverTagline("No tagline");
             }
         });
-    
+
         // Real-time update of chat messages
         const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
             setChat(res.data());
         });
-    
+
         // Cleanup
         return () => {
             unSub();
             unsubscribeTagline();
         };
     }, [user.id, chatId]);
-    
 
     const handleEmoji = (e) => {
         setText((prev) => prev + e.emoji);
@@ -102,7 +101,7 @@ const Chat = () => {
     };
 
     const handleSend = async () => {
-        if (text === "" || isCurrentUserBlocked || isReceiverBlocked) return;
+        if ((!text && !img.file && !audio.file) || isCurrentUserBlocked || isReceiverBlocked) return;
 
         let imgUrl = null;
         let audioUrl = null;
@@ -116,14 +115,16 @@ const Chat = () => {
                 audioUrl = await upload(audio.file);
             }
 
+            const message = {
+                senderId: currentUser.id,
+                createdAt: new Date(),
+                ...(text && { text }),
+                ...(imgUrl && { img: imgUrl }),
+                ...(audioUrl && { audio: audioUrl }),
+            };
+
             await updateDoc(doc(db, "chats", chatId), {
-                messages: arrayUnion({
-                    senderId: currentUser.id,
-                    text,
-                    createdAt: new Date(),
-                    ...(imgUrl && { img: imgUrl }),
-                    ...(audioUrl && { audio: audioUrl }),
-                }),
+                messages: arrayUnion(message),
             });
 
             const userIDs = [currentUser.id, user.id];
@@ -139,7 +140,7 @@ const Chat = () => {
                         (c) => c.chatId === chatId
                     );
 
-                    userChatsData.chats[chatIndex].lastMessage = text;
+                    userChatsData.chats[chatIndex].lastMessage = text || "Media message";
                     userChatsData.chats[chatIndex].isSeen =
                         id === currentUser.id ? true : false;
                     userChatsData.chats[chatIndex].updatedAt = Date.now();
@@ -190,7 +191,7 @@ const Chat = () => {
                                 ? "message own"
                                 : "message"
                         }
-                        key={message.createAt}
+                        key={message.createdAt}
                     >
                         <div className="texts">
                             {message.img && <img src={message.img} alt="" />}
@@ -204,7 +205,7 @@ const Chat = () => {
                                     element.
                                 </audio>
                             )}
-                            <p>{message.text}</p>
+                            {message.text && <p>{message.text}</p>}
                             <span>{format(message.createdAt.toDate())}</span>
                         </div>
                     </div>
@@ -260,7 +261,7 @@ const Chat = () => {
                     type="text"
                     placeholder={
                         isCurrentUserBlocked || isReceiverBlocked
-                            ? "Under Review for undemocractic behavior"
+                            ? "Under Review for undemocratic behavior"
                             : "For Democracy..."
                     }
                     value={text}
