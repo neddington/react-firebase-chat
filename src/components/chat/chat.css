@@ -169,6 +169,28 @@
       }
     }
   }
+
+  .video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+  }
+
+  video {
+    border: 2px solid #dddddd35;
+    border-radius: 10px;
+  }
+
+  .endCallButton {
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 }
 
 @media (max-width: 767px) {

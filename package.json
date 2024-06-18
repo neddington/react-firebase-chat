@@ -12,10 +12,13 @@
   "dependencies": {
     "emoji-picker-react": "^4.9.3",
     "firebase": "^10.12.1",
+    "global": "^4.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-toastify": "^10.0.5",
+    "simple-peer": "^9.11.1",
     "timeago.js": "^4.0.2",
+    "webrtc-adapter": "^9.0.1",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

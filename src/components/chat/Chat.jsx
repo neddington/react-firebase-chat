@@ -7,75 +7,82 @@ import {
     getDoc,
     onSnapshot,
     updateDoc,
+    collection,
+    addDoc,
+    setDoc,
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/userStore";
-import { get } from "firebase/database";
 import upload from "../../lib/upload";
 import { format } from "timeago.js";
+import Peer from "simple-peer";
+import 'webrtc-adapter';
+
+// Polyfill global and process
+if (typeof global === 'undefined') {
+    window.global = window;
+}
+
+if (typeof process === 'undefined') {
+    window.process = {
+        env: {
+            NODE_ENV: 'development'
+        }
+    };
+}
 
 const Chat = () => {
     const [receiverTagline, setReceiverTagline] = useState("");
     const [chat, setChat] = useState();
     const [open, setOpen] = useState(false);
     const [text, setText] = useState("");
-    const [img, setImg] = useState({
-        file: null,
-        url: "",
-    });
-    const [audio, setAudio] = useState({
-        file: null,
-        url: "",
-    });
+    const [img, setImg] = useState({ file: null, url: "" });
+    const [audio, setAudio] = useState({ file: null, url: "" });
+    const [localStream, setLocalStream] = useState(null);
+    const [remoteStream, setRemoteStream] = useState(null);
+    const [peerInstance, setPeerInstance] = useState(null);
+    const localVideo = useRef(null);
+    const remoteVideo = useRef(null);
 
     const { currentUser } = useUserStore();
-    const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } =
-        useChatStore();
+    const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
 
     const endRef = useRef(null);
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, []);
+    }, [chat]);
 
     useEffect(() => {
-        // Fetch the receiver's tagline
+        if (!user?.id || !chatId) return;
+
         const fetchReceiverTagline = async () => {
             try {
                 const userDoc = await getDoc(doc(db, "users", user.id));
                 const userData = userDoc.data();
-                if (userData && userData.tagline) {
-                    setReceiverTagline(userData.tagline);
-                } else {
-                    setReceiverTagline("No tagline");
-                }
+                setReceiverTagline(userData?.tagline || "No tagline");
             } catch (error) {
                 console.error("Error fetching receiver's tagline:", error);
             }
         };
 
-        // Real-time update of tagline
         const unsubscribeTagline = onSnapshot(doc(db, "users", user.id), (snapshot) => {
             const userData = snapshot.data();
-            if (userData && userData.tagline) {
-                setReceiverTagline(userData.tagline);
-            } else {
-                setReceiverTagline("No tagline");
-            }
+            setReceiverTagline(userData?.tagline || "No tagline");
         });
 
-        // Real-time update of chat messages
         const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
             setChat(res.data());
         });
 
-        // Cleanup
+        fetchReceiverTagline();
+
         return () => {
             unSub();
             unsubscribeTagline();
         };
-    }, [user.id, chatId]);
+    }, [user?.id, chatId]);
 
     const handleEmoji = (e) => {
         setText((prev) => prev + e.emoji);
@@ -154,17 +161,105 @@ const Chat = () => {
             console.log(err);
         }
 
-        setImg({
-            file: null,
-            url: "",
-        });
-
-        setAudio({
-            file: null,
-            url: "",
-        });
-
+        setImg({ file: null, url: "" });
+        setAudio({ file: null, url: "" });
         setText("");
+    };
+
+    const startCall = async (video = false) => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video, audio: true });
+            setLocalStream(stream);
+            localVideo.current.srcObject = stream;
+            const peer = new Peer({ initiator: true, trickle: false, stream });
+            setPeerInstance(peer);
+            setupPeer(peer, true);
+        } catch (err) {
+            console.error("Error starting call:", err);
+        }
+    };
+
+    const answerCall = async (offer, video = false) => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video, audio: true });
+            setLocalStream(stream);
+            localVideo.current.srcObject = stream;
+            const peer = new Peer({ initiator: false, trickle: false, stream });
+            setPeerInstance(peer);
+            peer.signal(offer);
+            setupPeer(peer, false);
+        } catch (err) {
+            console.error("Error answering call:", err);
+        }
+    };
+
+    const setupPeer = (peer, isInitiator) => {
+        const callDoc = doc(db, "calls", chatId);
+        const offerCandidates = collection(callDoc, "offerCandidates");
+        const answerCandidates = collection(callDoc, "answerCandidates");
+
+        peer.on("signal", async (data) => {
+            try {
+                if (isInitiator) {
+                    await setDoc(callDoc, { offer: data });
+                } else {
+                    await setDoc(callDoc, { answer: data });
+                }
+            } catch (err) {
+                console.error("Error signaling peer:", err);
+            }
+        });
+
+        peer.on("stream", (stream) => {
+            remoteVideo.current.srcObject = stream;
+            setRemoteStream(stream);
+        });
+
+        peer.on("error", (err) => {
+            console.error("Peer error:", err);
+        });
+
+        peer.on("close", () => {
+            console.log("Peer connection closed");
+        });
+
+        onSnapshot(callDoc, (snapshot) => {
+            const data = snapshot.data();
+            if (data?.offer && !isInitiator) {
+                peer.signal(data.offer);
+            } else if (data?.answer && isInitiator) {
+                peer.signal(data.answer);
+            }
+        });
+
+        onSnapshot(offerCandidates, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    const candidate = new RTCIceCandidate(change.doc.data());
+                    peer.addIceCandidate(candidate);
+                }
+            });
+        });
+
+        onSnapshot(answerCandidates, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    const candidate = new RTCIceCandidate(change.doc.data());
+                    peer.addIceCandidate(candidate);
+                }
+            });
+        });
+    };
+
+    const endCall = () => {
+        if (peerInstance) {
+            peerInstance.destroy();
+            setPeerInstance(null);
+            setLocalStream(null);
+            setRemoteStream(null);
+            localVideo.current.srcObject = null;
+            remoteVideo.current.srcObject = null;
+        }
     };
 
     return (
@@ -178,8 +273,8 @@ const Chat = () => {
                     </div>
                 </div>
                 <div className="icons">
-                    <img src="./phone.png" alt="" />
-                    <img src="./video.png" alt="" />
+                    <img src="./phone.png" alt="" onClick={() => startCall(false)} />
+                    <img src="./video.png" alt="" onClick={() => startCall(true)} />
                     <img src="./info.png" alt="" />
                 </div>
             </div>
@@ -292,6 +387,15 @@ const Chat = () => {
                 >
                     Send
                 </button>
+            </div>
+            <div className="video-container">
+                <video ref={localVideo} autoPlay muted style={{ width: "300px", height: "300px" }} />
+                <video ref={remoteVideo} autoPlay style={{ width: "300px", height: "300px" }} />
+                {peerInstance && (
+                    <button className="endCallButton" onClick={endCall}>
+                        End Call
+                    </button>
+                )}
             </div>
         </div>
     );
