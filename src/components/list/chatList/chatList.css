@@ -1,73 +1,140 @@
 .chatList {
-    flex: 1;
-    overflow: scroll;
-    .search {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Reduced gap */
+    padding: 5px; /* Reduced padding */
+
+    .searchBar {
+      flex: 1;
+      max-width: 70%; /* Set a max-width to reduce the width */
+      background-color: rgba(17, 25, 40, 0.5);
       display: flex;
       align-items: center;
-      gap: 20px;
-      padding: 20px;
-  
-      .searchBar {
+      gap: 5px; /* Reduced gap */
+      border-radius: 5px;
+      padding: 5px;
+
+      input {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: white;
         flex: 1;
-        background-color: rgba(17, 25, 40, 0.5);
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        border-radius: 10px;
-        padding: 10px;
-  
-        input {
-          background-color: transparent;
-          border: none;
-          outline: none;
-          color: white;
-          flex: 1;
-        }
-  
-        img {
-          width: 20px;
-          height: 20px;
-        }
+        font-size: 8px; /* Adjusted font size */
       }
-  
-      .add {
-        width: 36px;
-        height: 36px;
-        background-color: rgba(17, 25, 40, 0.5);
-        padding: 10px;
-        border-radius: 10px;
-        cursor: pointer;
+
+      img {
+        width: 10px;
+        height: 10px;
       }
     }
-    .item {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding: 20px;
-        cursor: pointer;
-        border-bottom: 1px solid #dddddd35;
-    
+
+    .add {
+      width: 15px;
+      height: 15px;
+      background-color: rgba(17, 25, 40, 0.5);
+      padding: 3px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #dddddd35;
+
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .texts {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+
+      span {
+        font-weight: 500;
+        font-size: 10px;
+      }
+
+      p {
+        font-size: 8px;
+        font-weight: 300;
+      }
+    }
+  }
+}
+
+@media (max-width: 844px) {
+  .chatList {
+    padding: 5px;
+    width: 100px; /* Set an explicit width */
+    min-width: 100px; /* Ensure it doesn't shrink below this width */
+
+    .search {
+      gap: 2px; /* Reduced gap further */
+      padding: 5px;
+
+      .searchBar {
+        gap: 2px; /* Reduced gap further */
+        padding: 5px;
+        max-width: 60%; /* Further reduce the max-width */
+
         img {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          object-fit: cover;
+          width: 10px;
+          height: 10px;
         }
-    
-        .texts {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-    
-          span {
-            font-weight: 500;
-          }
-    
-          p {
-            font-size: 14px;
-            font-weight: 300;
-          }
+
+        input {
+          font-size: 8px;
         }
       }
+
+      .add {
+        width: 12px; /* Reduced width */
+        height: 12px; /* Reduced height */
+        padding: 2px; /* Reduced padding */
+      }
+    }
+
+    .item {
+      gap: 3px; /* Reduced gap */
+      padding: 5px;
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .texts {
+        gap: 2px; /* Reduced gap */
+
+        span {
+          font-size: 10px;
+        }
+
+        p {
+          font-size: 8px;
+        }
+      }
+    }
   }
-  
+
+  .list {
+    width: 150px; /* Set an explicit width */
+    min-width: 150px; /* Ensure it doesn't shrink below this width */
+  }
+}
