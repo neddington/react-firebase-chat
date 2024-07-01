@@ -3,7 +3,6 @@ import Chat from "./components/chat/Chat";
 import Detail from "./components/detail/Detail";
 import List from "./components/list/List";
 import Login from "./components/login/Login";
-import Notification from "./components/notification/Notification";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { useUserStore } from "./lib/userStore";
@@ -23,6 +22,21 @@ const App = () => {
     };
   }, [fetchUserInfo]);
 
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      if (Notification.permission !== "granted") {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          console.log("Notification permission granted.");
+        }
+      }
+    };
+
+    // Request notification permission on app load or user interaction
+    requestNotificationPermission();
+
+  }, []);
+
   if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
@@ -36,7 +50,6 @@ const App = () => {
       ) : (
         <Login />
       )}
-      <Notification />
     </div>
   );
 };
