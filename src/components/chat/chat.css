@@ -5,9 +5,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-width: 350px;
 
   .top {
-    padding: 20px;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -16,11 +17,11 @@
     .user {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 10px;
 
       img {
-        width: 60px;
-        height: 60px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         object-fit: cover;
       }
@@ -28,15 +29,15 @@
       .texts {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 3px;
 
         span {
-          font-size: 18px;
+          font-size: 12px;
           font-weight: bold;
         }
 
         p {
-          font-size: 14px;
+          font-size: 10px;
           font-weight: 300;
           color: #a5a5a5;
         }
@@ -45,27 +46,27 @@
 
     .icons {
       display: flex;
-      gap: 20px;
+      gap: 10px;
 
       img {
-        width: 20px;
-        height: 20px;
+        width: 10px;
+        height: 10px;
       }
     }
   }
 
   .center {
-    padding: 20px;
+    padding: 10px;
     flex: 1;
-    overflow: scroll;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 5px; /* Reduce gap */
 
     .message {
       max-width: 70%;
       display: flex;
-      gap: 20px;
+      gap: 5px; /* Reduce gap */
 
       &.own {
         align-self: flex-end;
@@ -78,8 +79,8 @@
       }
 
       img {
-        width: 30px;
-        height: 30px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         object-fit: cover;
       }
@@ -88,45 +89,45 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 3px;
 
         img {
-          width: 400px;
-          height: 400px;
+          width: 150px;
+          height: 150px;
           border-radius: 10px;
           object-fit: contain;
         }
 
         p {
-          padding: 20px;
+          padding: 10px;
           background-color: rgba(17, 25, 40, 0.3);
           border-radius: 10px;
         }
 
         span {
-          font-size: 13px;
+          font-size: 10px;
         }
       }
     }
   }
 
   .bottom {
-    padding: 20px;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-top: 1px solid #dddddd35;
-    gap: 20px;
+    gap: 10px;
     margin-top: auto;
 
     .icons {
       display: flex;
-      gap: 20px;
+      gap: 10px;
     }
 
     img {
-      width: 20px;
-      height: 20px;
+      width: 15px;
+      height: 15px;
       cursor: pointer;
     }
 
@@ -136,13 +137,9 @@
       border: none;
       outline: none;
       color: white;
-      padding: 20px;
+      padding: 10px;
       border-radius: 10px;
-      font-size: 16px;
-
-      &:disabled {
-        cursor: not-allowed;
-      }
+      font-size: 14px;
     }
 
     .emoji {
@@ -158,7 +155,7 @@
     .sendButton {
       background-color: #5183fe;
       color: white;
-      padding: 10px 20px;
+      padding: 5px 10px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -171,260 +168,96 @@
   }
 }
 
-@media (max-width: 767px) {
-  .top {
-    padding: 10px;
+@media (max-width: 844px) {
+  .chat {
+    min-width: 250px;
+    max-width: 250px;
 
-    .user {
-      gap: 10px;
+    .top {
+      padding: 5px;
 
-      img {
-        width: 40px;
-        height: 40px;
-      }
-
-      .texts {
-        gap: 3px;
-
-        span {
-          font-size: 14px;
-        }
-
-        p {
-          font-size: 12px;
-        }
-      }
-    }
-
-    .icons {
-      gap: 10px;
-
-      img {
-        width: 15px;
-        height: 15px;
-      }
-    }
-  }
-
-  .center {
-    padding: 10px;
-    gap: 10px;
-
-    .message {
-      gap: 10px;
-
-      img {
-        width: 20px;
-        height: 20px;
-      }
-
-      .texts {
-        gap: 3px;
+      .user {
+        gap: 5px;
 
         img {
-          width: 350px;
-          height: 350px;
+          width: 20px;
+          height: 20px;
         }
 
-        p {
-          padding: 10px;
-        }
+        .texts {
+          gap: 2px;
 
-        span {
-          font-size: 11px;
-        }
-      }
-    }
-  }
+          span {
+            font-size: 10px;
+          }
 
-  .bottom {
-    padding: 10px;
-    gap: 10px;
-
-    img {
-      width: 15px;
-      height: 15px;
-    }
-
-    input {
-      padding: 10px;
-      font-size: 14px;
-    }
-
-    .sendButton {
-      padding: 5px 10px;
-    }
-  }
-}
-
-@media (min-width: 1024px) {
-  .top {
-    padding: 30px;
-
-    .user {
-      gap: 30px;
-
-      img {
-        width: 70px;
-        height: 70px;
-      }
-
-      .texts {
-        gap: 10px;
-
-        span {
-          font-size: 20px;
-        }
-
-        p {
-          font-size: 16px;
+          p {
+            font-size: 8px;
+          }
         }
       }
-    }
 
-    .icons {
-      gap: 30px;
-
-      img {
-        width: 25px;
-        height: 25px;
-      }
-    }
-  }
-
-  .center {
-    padding: 30px;
-    gap: 30px;
-
-    .message {
-      gap: 30px;
-
-      img {
-        width: 40px;
-        height: 40px;
-      }
-
-      .texts {
-        gap: 10px;
+      .icons {
+        gap: 5px;
 
         img {
-          width: 400px;
-          height: 400px;
-        }
-
-        p {
-          padding: 30px;
-        }
-
-        span {
-          font-size: 15px;
-        }
-      }
-    }
-  }
-
-  .bottom {
-    padding: 30px;
-    gap: 30px;
-
-    img {
-      width: 25px;
-      height: 25px;
-    }
-
-    input {
-      padding: 30px;
-      font-size: 18px;
-    }
-
-    .sendButton {
-      padding: 15px 30px;
-    }
-  }
-}
-
-@media (min-width: 1440px) {
-  .top {
-    padding: 40px;
-
-    .user {
-      gap: 40px;
-
-      img {
-        width: 80px;
-        height: 80px;
-      }
-
-      .texts {
-        gap: 15px;
-
-        span {
-          font-size: 22px;
-        }
-
-        p {
-          font-size: 18px;
+          width: 10px;
+          height: 10px;
         }
       }
     }
 
-    .icons {
-      gap: 40px;
+    .center {
+      padding: 5px;
+      gap: 5px;
 
-      img {
-        width: 30px;
-        height: 30px;
-      }
-    }
-  }
-
-  .center {
-    padding: 40px;
-    gap: 40px;
-
-    .message {
-      gap: 40px;
-
-      img {
-        width: 50px;
-        height: 50px;
-      }
-
-      .texts {
-        gap: 15px;
+      .message {
+        gap: 5px;
 
         img {
-          width: 400px;
-          height: 400px;
+          width: 10px;
+          height: 10px;
         }
 
-        p {
-          padding: 40px;
-        }
+        .texts {
+          gap: 2px;
 
-        span {
-          font-size: 17px;
+          img {
+            width: 100px;
+            height: 100px;
+          }
+
+          p {
+            padding: 5px;
+            font-size: 8px;
+          }
+
+          span {
+            font-size: 6px;
+          }
         }
       }
     }
-  }
 
-  .bottom {
-    padding: 40px;
-    gap: 40px;
+    .bottom {
+      padding: 5px;
+      gap: 5px;
 
-    img {
-      width: 30px;
-      height: 30px;
-    }
+      img {
+        width: 10px;
+        height: 10px;
+      }
 
-    input {
-      padding: 40px;
-      font-size: 20px;
-    }
+      input {
+        padding: 5px;
+        font-size: 8px;
+        max-width: 150px; /* Reduce max width */
+      }
 
-    .sendButton {
-      padding: 20px 40px;
+      .sendButton {
+        padding: 5px 10px;
+        font-size: 8px;
+      }
     }
   }
 }
