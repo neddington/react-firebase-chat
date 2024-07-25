@@ -161,3 +161,66 @@
     }
   }
 }
+
+@media (max-width: 844px) and (max-height: 390px) {
+  .detail {
+    font-size: 0.6rem; /* Reduce the font size for smaller screens */
+  }
+
+  .detail .user {
+    padding: 5px;
+
+    img {
+      width: 25px; /* Adjusted to be smaller */
+      height: 25px; /* Adjusted to be smaller */
+    }
+  }
+
+  .detail .info {
+    padding: 5px;
+    gap: 5px;
+
+    .option {
+      .title {
+        img {
+          width: 10px;
+          height: 10px;
+        }
+      }
+
+      .photos {
+        gap: 5px;
+        margin-top: 5px;
+
+        .photoItem {
+          .photoDetail {
+            gap: 5px;
+
+            img {
+              width: 10px;
+              height: 10px;
+            }
+
+            span {
+              font-size: 6px;
+            }
+          }
+
+          .icon {
+            width: 7px;
+            height: 7px;
+          }
+        }
+      }
+    }
+
+    button {
+      padding: 3px;
+      font-size: 6px;
+
+      &.logout {
+        padding: 3px;
+      }
+    }
+  }
+}
